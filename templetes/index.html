@@ -1,0 +1,43 @@
+<!-- myapp/static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Django WebSocket Example</title>
+</head>
+<body>
+    <h1>WebSocket and API Data Save</h1>
+    <button onclick="sendData()">Send Data via WebSocket</button>
+    <button onclick="sendApiData()">Send Data via API</button>
+    <script>
+        const ws = new WebSocket('ws://127.0.0.1:8000/ws/async/');
+
+        ws.onopen = function() {
+            console.log('WebSocket is connected');
+        };
+
+        ws.onmessage = function(event) {
+            const message = JSON.parse(event.data);
+            console.log('Received:', message);
+        };
+
+        function sendData() {
+            const data = {field1: 'example', field2: 42};
+            ws.send(JSON.stringify(data));
+        }
+
+        async function sendApiData() {
+            const data = {field1: 'example', field2: 42};
+            const response = await fetch('/api/yourmodel/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            console.log('API Response:', result);
+        }
+    </script>
+</body>
+</html>
